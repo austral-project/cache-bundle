@@ -1,5 +1,5 @@
 austral_cache:
-  enabled:            true
+  enabled:            false
   clearAuto:          false
   shared_age_max:     3600
   include:

@@ -66,7 +66,7 @@ class Configuration implements ConfigurationInterface
   public function getConfigDefault(): array
   {
     return array(
-      "enabled"           =>  true,
+      "enabled"           =>  false,
       "clearAuto"         =>  false,
       "shared_age_max"    =>  3600,
       "include"           =>  array(

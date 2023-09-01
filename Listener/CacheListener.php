@@ -50,13 +50,19 @@ class CacheListener
    */
   public function onResponse(ResponseEvent $responseEvent)
   {
-    if($this->cacheEnabled($responseEvent->getRequest()))
+    if($this->configuration->get('enabled') && $this->cacheEnabled($responseEvent->getRequest()))
     {
       $responseEvent->getResponse()->setSharedMaxAge($this->configuration->get('shared_age_max'));
     }
   }
 
-  protected function cacheEnabled(Request $request)
+  /**
+   * cacheEnabled
+   *
+   * @param Request $request
+   * @return bool
+   */
+  protected function cacheEnabled(Request $request): bool
   {
     $currentDomain = $request->server->get('HTTP_HOST');
     $domainIsChecked = null;
