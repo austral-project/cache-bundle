@@ -1,0 +1,21 @@
+services:
+
+parameters:
+
+  austral.admin.class.cache.class:                          Austral\CacheBundle\Admin\CacheAdmin
+  austral.admin.modules.entity_cache_bundle.cache.enabled:  true
+
+  austral_admin.modules.entity_cache_bundle:
+    cache:
+      enabled:                "%austral.admin.modules.entity_cache_bundle.cache.enabled%"
+      navigation:
+        position:             1000
+      name:                   "Cache"
+      picto:                  "austral-picto-layers"
+      pictoTile:              "parameters"
+      route:                  "cache"
+      class:                  "%austral.admin.class.cache.class%"
+      actions:
+        index:                "index"
+        purge-all:            "purgeAll"
+      translate:              "male_c"

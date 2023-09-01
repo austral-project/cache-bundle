@@ -1,0 +1,11 @@
+austral_cache:
+  enabled:            true
+  clearAuto:          false
+  shared_age_max:     3600
+  include:
+    path:             []
+    domain:           []
+  exclude:
+    path:             []
+    domain:           []
+

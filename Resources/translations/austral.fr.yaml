@@ -1,0 +1,21 @@
+pages:
+  names:
+    cache:
+      singular:                                     Gestion du cache
+      plural:                                       Gestion du cache
+      subTitle:                                     Vue d'ensemble des urls mise en cache
+
+
+actions:
+  clear_http_cache:                                 Supprimer tout le cache HTTP
+
+
+cache:
+  urls:
+    inCache:                                        Nombre d'urls en cache
+    total:                                          Nombre d'urls total
+    inNotCache:                                     Nombre d'urls non en cache
+  thead:
+    url:                                            Url
+    inCache:                                        Mise en cache
+    action:                                         Supprimer l'url du cache

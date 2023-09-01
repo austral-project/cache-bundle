@@ -1,0 +1,104 @@
+{% extends "@AustralAdmin/Layout/layout.html.twig" %}
+{% block content %}
+
+  <div id="cache-viewer">
+    {{ include("@AustralAdmin/Layout/Bandeau/top.html.twig", {
+      sticky: true,
+      subTitle: "pages.names.cache.subTitle"|trans({"%module_gender%": module.translateGenre, "%module_name%": module.translateSingular }, "austral"),
+    }) }}
+  <div class="dashboard-container">
+    <div class="grid grid--container">
+      <div class="row">
+        <div class="col col--xs-12">
+          <div class="dashboard-blocks">
+            <div class="dashboard-block full">
+              <div class="dashboard-values  row children-3 odd dashboard-values-type-tile">
+                <div class="dashboard-value tile-value color-4">
+                  <div class="picto-content">
+                    <img src="/bundles/australadmin/images/tile-picto/color-4/austral-icon-link.svg">
+                  </div>
+                  <div class="value-content">
+                    <span class="value">{{ urlsCaches.inCache }}</span>
+                    <span class="entitled"{{ "cache.urls.inCache"|trans({}, "austral") }}</span>
+                  </div>
+                </div>
+                <div class="dashboard-value tile-value color-5">
+                  <div class="picto-content">
+                    <img src="/bundles/australadmin/images/tile-picto/color-5/austral-icon-link.svg">
+                  </div>
+                  <div class="value-content">
+                    <span class="value">{{ urlsCaches.total }}</span>
+                    <span class="entitled">{{ "cache.urls.total"|trans({}, "austral") }}</span>
+                  </div>
+                </div>
+                <div class="dashboard-value tile-value color-3">
+                  <div class="picto-content">
+                    <img src="/bundles/australadmin/images/tile-picto/color-3/austral-icon-link.svg">
+                  </div>
+                  <div class="value-content">
+                    <span class="value">{{ urlsCaches.total - urlsCaches.inCache }}</span>
+                    <span class="entitled">{{ "cache.urls.inNotCache"|trans({}, "austral") }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col--xs-12">
+          <ul class="list-urls-in-cache">
+            {% for  domain, urlsByLanguage in urlsCaches.urls %}
+              {% for language, urls in urlsByLanguage %}
+                <li>
+                  <div class="top">
+                    <span class="domain-name">{{ domain }}</span>
+                    <span class="language-name">{{ language }}</span>
+                  </div>
+                  <div class="list-table-container">
+                    <table>
+                      <thead>
+                      <tr>
+                        <th class="url">{{ "cache.thead.url"|trans({}, "austral") }}</th>
+                        <th class="status col--align-center">{{ "cache.thead.inCache"|trans({}, "austral") }}</th>
+                        <th class="action col--align-right"></th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      {% for url, cacheInfo in urls %}
+                        <tr class="url-content">
+                          <td class="url"><span class="value-content value-type font-poppins-m-11-grey">{{ url }}</span></td>
+                          <td class="status col--align-center">
+                            {% if cacheInfo.status %}<span class="picto is-cached austral-picto-check"></span>{% else %}<span class="picto austral-picto-cross"></span>{% endif %}
+                          </td>
+                          <td class="action col--align-right">
+                            {% if cacheInfo.status %}
+                              {{ include("@AustralDesign/Components/Button/picto.html.twig",
+                                {
+                                  tag:            "a",
+                                  url:            moduleCachePurgeAll.generateUrl()~"?uri="~url,
+                                  picto:          "austral-picto-trash",
+                                  title:          "cache.thead.action"|trans({}, "austral"),
+                                }
+                              )}}
+                            {% endif %}
+                          </td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </li>
+              {% endfor %}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+    
+    
+  </div>
+{% endblock %}
