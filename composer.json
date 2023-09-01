@@ -16,7 +16,7 @@
 
     "austral/tools-bundle":                   "^3.1",
     "symfony/cache":                          "^5.4",
-    "symfony/http-kernel":                    "^5.4",
+    "symfony/http-kernel":                    "^5.4"
   },
   "require-dev": {
   },
