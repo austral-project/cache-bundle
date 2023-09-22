@@ -11,6 +11,7 @@ actions:
 
 
 cache:
+  filter:                                           Filter URLs by typology
   urls:
     inCache:                                        Number of cached URLS
     total:                                          Total number of URLs
@@ -20,3 +21,9 @@ cache:
     url:                                            URL
     inCache:                                        Caching
     action:                                         Delete this url from cache
+  choices:
+    status:
+      all:                                          All urls
+      inCache:                                      Urls in caches
+      noCache:                                      Urls not présent in caches
+      disabled:                                     Urls disabled from cache
