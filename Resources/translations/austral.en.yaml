@@ -15,6 +15,7 @@ cache:
     inCache:                                        Number of cached URLS
     total:                                          Total number of URLs
     inNotCache:                                     Number of uncached URLs
+    disabledCache:                                  Number of disabled cached URLs
   thead:
     url:                                            URL
     inCache:                                        Caching

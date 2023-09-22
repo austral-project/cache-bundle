@@ -20,12 +20,18 @@ services:
   austral.cache.listener:
     class: Austral\CacheBundle\Listener\CacheListener
     arguments:
-      - "@austral.cache.config"
+      - "@austral.cache.http_cache_enabled_checker"
       - "@austral.tools.debug"
     tags:
       - { name: kernel.event_listener, event: kernel.response, method: onResponse, priority: -2096 }
 
 ##### Cache Services
+
+  austral.cache.http_cache_enabled_checker:
+    class:          Austral\CacheBundle\Services\HttpCacheEnabledChecker
+    arguments:
+      - "@austral.cache.config"
+      - "@austral.tools.debug"
 
   austral.cache.http_cache:
     class:          Austral\CacheBundle\Services\HttpCache

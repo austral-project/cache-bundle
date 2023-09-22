@@ -12,14 +12,14 @@
         <div class="col col--xs-12">
           <div class="dashboard-blocks">
             <div class="dashboard-block full">
-              <div class="dashboard-values  row children-3 odd dashboard-values-type-tile">
+              <div class="dashboard-values  row children-4 event dashboard-values-type-tile">
                 <div class="dashboard-value tile-value color-4">
                   <div class="picto-content">
                     <img src="/bundles/australadmin/images/tile-picto/color-4/austral-icon-link.svg">
                   </div>
                   <div class="value-content">
                     <span class="value">{{ urlsCaches.inCache }}</span>
-                    <span class="entitled"{{ "cache.urls.inCache"|trans({}, "austral") }}</span>
+                    <span class="entitled">{{ "cache.urls.inCache"|trans({}, "austral") }}</span>
                   </div>
                 </div>
                 <div class="dashboard-value tile-value color-5">
@@ -36,8 +36,17 @@
                     <img src="/bundles/australadmin/images/tile-picto/color-3/austral-icon-link.svg">
                   </div>
                   <div class="value-content">
-                    <span class="value">{{ urlsCaches.total - urlsCaches.inCache }}</span>
+                    <span class="value">{{ (urlsCaches.total - urlsCaches.disabled) - urlsCaches.inCache }}</span>
                     <span class="entitled">{{ "cache.urls.inNotCache"|trans({}, "austral") }}</span>
+                  </div>
+                </div>
+                <div class="dashboard-value tile-value color-2">
+                  <div class="picto-content">
+                    <img src="/bundles/australadmin/images/tile-picto/color-3/austral-icon-link.svg">
+                  </div>
+                  <div class="value-content">
+                    <span class="value">{{ urlsCaches.disabled }}</span>
+                    <span class="entitled">{{ "cache.urls.disabledCache"|trans({}, "austral") }}</span>
                   </div>
                 </div>
               </div>
@@ -70,10 +79,14 @@
                         <tr class="url-content">
                           <td class="url"><span class="value-content value-type font-poppins-m-11-grey">{{ url }}</span></td>
                           <td class="status col--align-center">
-                            {% if cacheInfo.status %}<span class="picto is-cached austral-picto-check"></span>{% else %}<span class="picto austral-picto-cross"></span>{% endif %}
+                            {% if cacheInfo.enabled  %}
+                              {% if cacheInfo.status %}<span class="picto is-cached austral-picto-check"></span>{% else %}<span class="picto austral-picto-cross"></span>{% endif %}
+                            {% else %}
+                              <span class="picto is-cached-disabled austral-picto-interdict"></span>
+                            {% endif %}
                           </td>
                           <td class="action col--align-right">
-                            {% if cacheInfo.status %}
+                            {% if cacheInfo.status and cacheInfo.enabled %}
                               {{ include("@AustralDesign/Components/Button/picto.html.twig",
                                 {
                                   tag:            "a",

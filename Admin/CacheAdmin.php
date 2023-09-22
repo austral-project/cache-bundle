@@ -32,7 +32,9 @@ class CacheAdmin extends Admin
     $urlsByCache = array();
     $urlsInCache = 0;
     $urlsTotal = 0;
+    $urlsDisabled = 0;
     $httpCache = $this->container->get("http_cache");
+    $httpCacheEnabledChecker = $this->container->get("austral.cache.http_cache_enabled_checker");
 
     if($this->container->has('austral.seo.url_parameter.management'))
     {
@@ -62,10 +64,19 @@ class CacheAdmin extends Admin
               $uri = $australRouting->getUrl("austral_website_homepage", $urlParameter, array('_locale'=>$langue));
             }
             $cacheKey = 'md'.hash('sha256', $uri);
+
+            $cacheEnabled = $httpCacheEnabledChecker
+              ->setEnabledByUrl($urlParameter->getInCacheEnabled())
+              ->checkByDomainAndUri($urlParametersByDomainAndLanguage->getDomain()->getDomain(), $uri);
             $urlsByCache[$urlParametersByDomainAndLanguage->getDomain()->getDomain()][$langue][$uri] = array(
               "status"  =>  file_exists($httpCache->getStore()->getPath($cacheKey)),
+              "enabled" =>  $cacheEnabled,
               "key"     =>  $cacheKey
             );
+            if(!$cacheEnabled)
+            {
+              $urlsDisabled++;
+            }
             $urlsTotal++;
             if($urlsByCache[$urlParametersByDomainAndLanguage->getDomain()->getDomain()][$langue][$uri]["status"] === true)
             {
@@ -78,7 +89,8 @@ class CacheAdmin extends Admin
     $listAdminEvent->getTemplateParameters()->addParameters("urlsCaches", array(
       "total"       =>  $urlsTotal,
       "inCache"     =>  $urlsInCache,
-      "urls"        =>  $urlsByCache
+      "urls"        =>  $urlsByCache,
+      "disabled"    =>  $urlsDisabled
     ));
 
     $listAdminEvent->getTemplateParameters()->addParameters("actions", array(
