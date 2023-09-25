@@ -11,11 +11,19 @@ actions:
 
 
 cache:
+  filter:                                           Filtrer les urls par typologie
   urls:
     inCache:                                        Nombre d'urls en cache
     total:                                          Nombre d'urls total
     inNotCache:                                     Nombre d'urls non en cache
+    disabledCache:                                  Nombre d'urls désactivé du cache
   thead:
     url:                                            Url
     inCache:                                        Mise en cache
     action:                                         Supprimer l'url du cache
+  choices:
+    status:
+      all:                                          Toutes les urls
+      inCache:                                      Urls en caches
+      noCache:                                      Urls non présent en caches
+      disabled:                                     Urls désactivé du cache

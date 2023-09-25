@@ -2,11 +2,13 @@ parameters:
 
 services:
   _defaults:
-    public:        true
-
+    autowire:       true
+    autoconfigure:  true
+    public:         true
 
 
 ##### Austral Event Subscriber
+  Austral\CacheBundle\EventSubscriber\HttpCacheSubscriber:  "@austral.cache.event_subscriber"
   austral.cache.event_subscriber:
     class:        Austral\CacheBundle\EventSubscriber\HttpCacheSubscriber
     arguments:
@@ -17,16 +19,25 @@ services:
 
 ##### Http Listener Kernel
 
+  Austral\CacheBundle\Listener\CacheListener: "@austral.cache.listener"
   austral.cache.listener:
     class: Austral\CacheBundle\Listener\CacheListener
     arguments:
-      - "@austral.cache.config"
+      - "@austral.cache.http_cache_enabled_checker"
       - "@austral.tools.debug"
     tags:
       - { name: kernel.event_listener, event: kernel.response, method: onResponse, priority: -2096 }
 
 ##### Cache Services
 
+  Austral\CacheBundle\Services\HttpCacheEnabledChecker: "@austral.cache.http_cache_enabled_checker"
+  austral.cache.http_cache_enabled_checker:
+    class:          Austral\CacheBundle\Services\HttpCacheEnabledChecker
+    arguments:
+      - "@austral.cache.config"
+      - "@austral.tools.debug"
+
+  Austral\CacheBundle\Services\HttpCache: "@austral.cache.http_cache"
   austral.cache.http_cache:
     class:          Austral\CacheBundle\Services\HttpCache
     arguments:      ["@kernel", "@http_cache.store", "@?esi"]
@@ -37,6 +48,7 @@ services:
 
 ##### Configuration
 
+  Austral\CacheBundle\Configuration\CacheConfiguration: "@austral.cache.config"
   austral.cache.config:
     class:      Austral\CacheBundle\Configuration\CacheConfiguration
     arguments:  [ "%austral_cache%" ]

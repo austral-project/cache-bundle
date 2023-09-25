@@ -12,14 +12,14 @@
         <div class="col col--xs-12">
           <div class="dashboard-blocks">
             <div class="dashboard-block full">
-              <div class="dashboard-values  row children-3 odd dashboard-values-type-tile">
+              <div class="dashboard-values  row children-4 event dashboard-values-type-tile">
                 <div class="dashboard-value tile-value color-4">
                   <div class="picto-content">
                     <img src="/bundles/australadmin/images/tile-picto/color-4/austral-icon-link.svg">
                   </div>
                   <div class="value-content">
                     <span class="value">{{ urlsCaches.inCache }}</span>
-                    <span class="entitled"{{ "cache.urls.inCache"|trans({}, "austral") }}</span>
+                    <span class="entitled">{{ "cache.urls.inCache"|trans({}, "austral") }}</span>
                   </div>
                 </div>
                 <div class="dashboard-value tile-value color-5">
@@ -36,14 +36,83 @@
                     <img src="/bundles/australadmin/images/tile-picto/color-3/austral-icon-link.svg">
                   </div>
                   <div class="value-content">
-                    <span class="value">{{ urlsCaches.total - urlsCaches.inCache }}</span>
+                    <span class="value">{{ (urlsCaches.total - urlsCaches.disabled) - urlsCaches.inCache }}</span>
                     <span class="entitled">{{ "cache.urls.inNotCache"|trans({}, "austral") }}</span>
+                  </div>
+                </div>
+                <div class="dashboard-value tile-value color-2">
+                  <div class="picto-content">
+                    <img src="/bundles/australadmin/images/tile-picto/color-3/austral-icon-link.svg">
+                  </div>
+                  <div class="value-content">
+                    <span class="value">{{ urlsCaches.disabled }}</span>
+                    <span class="entitled">{{ "cache.urls.disabledCache"|trans({}, "austral") }}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col col--xs-12">
+          <div class="urls-cache-filter">
+            {% include "@AustralDesign/Components/ChoiceElement/choice-element.html.twig" with {
+              class:        "full",
+              title:        "cache.filter"|trans({}, "austral"),
+              picto:        "",
+              id:           "choice-status-cache",
+              current:      "all",
+              attr:         {
+                "data-view-by-choices-element": ".dashboard-container",
+                "data-view-by-choices-children": ".view-element-by-choices-status",
+                "data-view-by-choices": '{"all":"element-view-status-all","inCache":"element-view-status-in-cache","noCache":"element-view-status-no-cache","disabled":"element-view-status-disabled"}'
+              },
+              choices:      {
+                "all": {
+                  picto:        "austral-picto-cube",
+                  entitled:     "cache.choices.status.all"|trans({}, "austral"),
+                  input:        "<input id='choices-status-cache-all' name='choices-status-cache' checked type='radio' value='all' />",
+                  style:        [
+                    "--element-choice-current-background:var(--color-purple-20)",
+                    "--element-choice-current-color:var(--color-purple-100)",
+                    "--element-choice-hover-color:var(--color-purple-100)"
+                  ],
+                },
+                "inCache":  {
+                  picto:        "austral-picto-check",
+                  entitled:     "cache.choices.status.inCache"|trans({}, "austral"),
+                  input:        "<input id='choices-status-cache-inCache' name='choices-status-cache' type='radio' value='inCache' />",
+                  style:        [
+                    "--element-choice-current-background:var(--color-green-20)",
+                    "--element-choice-current-color:var(--color-green-100)",
+                    "--element-choice-hover-color:var(--color-green-100)"
+                  ],
+                },
+                "noCache": {
+                  picto:        "austral-picto-cross",
+                  entitled:     "cache.choices.status.noCache"|trans({}, "austral"),
+                  input:        "<input id='choices-status-cache-noCache' name='choices-status-cache' type='radio' value='noCache' />",
+                  style:        [
+                    "--element-choice-current-background:var(--color-red-20)",
+                    "--element-choice-current-color:var(--color-red-90)",
+                    "--element-choice-hover-color:var(--color-red-90)"
+                  ],
+                },
+                "disabled": {
+                  picto:        "austral-picto-interdict",
+                  entitled:     "cache.choices.status.disabled"|trans({}, "austral"),
+                  input:        "<input id='choices-status-cache-disabled' name='choices-status-cache' type='radio' value='disabled' />",
+                  style:        [
+                    "--element-choice-current-background:var(--color-yellow-20)",
+                    "--element-choice-current-color:var(--color-yellow-90)",
+                    "--element-choice-hover-color:var(--color-yellow-90)"
+                  ],
+                }
+              }
+            } %}
+          </div>
         </div>
       </div>
       <div class="row">
@@ -51,44 +120,62 @@
           <ul class="list-urls-in-cache">
             {% for  domain, urlsByLanguage in urlsCaches.urls %}
               {% for language, urls in urlsByLanguage %}
-                <li>
+                <li class="line-by-domain">
                   <div class="top">
                     <span class="domain-name">{{ domain }}</span>
                     <span class="language-name">{{ language }}</span>
                   </div>
-                  <div class="list-table-container">
-                    <table>
-                      <thead>
-                      <tr>
-                        <th class="url">{{ "cache.thead.url"|trans({}, "austral") }}</th>
-                        <th class="status col--align-center">{{ "cache.thead.inCache"|trans({}, "austral") }}</th>
-                        <th class="action col--align-right"></th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      {% for url, cacheInfo in urls %}
-                        <tr class="url-content">
-                          <td class="url"><span class="value-content value-type font-poppins-m-11-grey">{{ url }}</span></td>
-                          <td class="status col--align-center">
-                            {% if cacheInfo.status %}<span class="picto is-cached austral-picto-check"></span>{% else %}<span class="picto austral-picto-cross"></span>{% endif %}
-                          </td>
-                          <td class="action col--align-right">
-                            {% if cacheInfo.status %}
-                              {{ include("@AustralDesign/Components/Button/picto.html.twig",
-                                {
-                                  tag:            "a",
-                                  url:            moduleCachePurgeAll.generateUrl()~"?uri="~url,
-                                  picto:          "austral-picto-trash",
-                                  title:          "cache.thead.action"|trans({}, "austral"),
-                                }
-                              )}}
-                            {% endif %}
-                          </td>
-                        </tr>
-                      {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
+                  <ol class="list-ol-container">
+                    <li class="row-element lvl-1 row-element-top">
+                      <div class="col-content url-content">
+                        <div class="col-element auto flex-1">
+                          <span class="value-content">{{ "cache.thead.url"|trans({}, "austral") }}</span>
+                        </div>
+                        <div class="col-element auto right-position">
+                          <span class="value-content status">{{ "cache.thead.inCache"|trans({}, "austral") }}</span>
+                        </div>
+                        <div class="col-element auto">
+                          <div class="value-content">
+                            <div class="action"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                    {% for url, cacheInfo in urls %}
+                      <li class="url-content row-element lvl-1 element-view-status-all view-element-by-choices-status element-view-status-{% if cacheInfo.enabled %}{% if cacheInfo.status %}in-cache{% else %}no-cache{% endif %}{% else %}disabled{% endif %}">
+                        <div class="col-content url-content">
+                          <div class="col-element auto flex-1">
+                            <span class="value-content value-type font-poppins-m-11-grey">{{ url }}</span>
+                          </div>
+                          <div class="col-element auto right-position">
+                            <div class="value-content status">
+                              {% if cacheInfo.enabled  %}
+                                {% if cacheInfo.status %}<span class="picto is-cached austral-picto-check"></span>{% else %}<span class="picto austral-picto-cross"></span>{% endif %}
+                              {% else %}
+                                <span class="picto is-cached-disabled austral-picto-interdict"></span>
+                              {% endif %}
+                            </div>
+                          </div>
+                          <div class="col-element auto">
+                            <div class="value-content">
+                              <div class="action">
+                                {% if cacheInfo.status and cacheInfo.enabled %}
+                                  {{ include("@AustralDesign/Components/Button/picto.html.twig",
+                                    {
+                                      tag:            "a",
+                                      url:            moduleCachePurgeAll.generateUrl()~"?uri="~url,
+                                      picto:          "austral-picto-trash",
+                                      title:          "cache.thead.action"|trans({}, "austral"),
+                                    }
+                                  )}}
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    {% endfor %}
+                  </ol>
                 </li>
               {% endfor %}
             {% endfor %}
