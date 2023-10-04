@@ -67,11 +67,15 @@ class HttpCacheEnabledChecker
    * setEnabledByUrl
    *
    * @param bool|null $enabledByUrl
+   * @param bool $force
    * @return $this
    */
-  public function setEnabledByUrl(?bool $enabledByUrl): HttpCacheEnabledChecker
+  public function setEnabledByUrl(?bool $enabledByUrl, bool $force = false): HttpCacheEnabledChecker
   {
-    $this->enabledByUrl = $enabledByUrl;
+    if($force || $this->enabledByUrl)
+    {
+      $this->enabledByUrl = $enabledByUrl;
+    }
     return $this;
   }
 

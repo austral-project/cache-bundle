@@ -11,10 +11,15 @@
 namespace Austral\CacheBundle\Services;
 
 use Symfony\Bundle\FrameworkBundle\HttpCache\HttpCache as BaseHttpCache;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\HttpCache\SurrogateInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Class HttpCache
@@ -31,6 +36,13 @@ class HttpCache extends BaseHttpCache
    * @var string|null
    */
   protected ?string $purgeStatus = null;
+  protected ContainerInterface $container;
+
+  public function __construct(ContainerInterface $container, KernelInterface $kernel, $cache = null, SurrogateInterface $surrogate = null, array $options = null)
+  {
+    $this->container = $container;
+    parent::__construct($kernel, $cache, $surrogate, $options);
+  }
 
   /**
    * handle
@@ -43,6 +55,19 @@ class HttpCache extends BaseHttpCache
    */
   public function handle(Request $request, int $type = HttpKernelInterface::MAIN_REQUEST, bool $catch = true)
   {
+    if (HttpKernelInterface::MAIN_REQUEST === $type) {
+      $this->kernel->boot();
+      $request->headers->set("x-austral-cache-checked", true);
+      $this->container->get('request_stack')->push($request);
+      $event = new RequestEvent($this, $request, $type);
+      $this->container->get('event_dispatcher')->dispatch($event, KernelEvents::REQUEST);
+      if($this->container->get("security.authorization_checker")->isGranted("ROLE_ADMIN_ACCESS"))
+      {
+        $request->headers->remove("x-austral-cache-checked");
+        $this->purge($request);
+      }
+      $request->headers->remove("x-austral-cache-checked");
+    }
     return parent::handle($request, $type, $catch);
   }
 

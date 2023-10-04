@@ -40,11 +40,11 @@ services:
   Austral\CacheBundle\Services\HttpCache: "@austral.cache.http_cache"
   austral.cache.http_cache:
     class:          Austral\CacheBundle\Services\HttpCache
-    arguments:      ["@kernel", "@http_cache.store", "@?esi"]
+    arguments:      ["@service_container","@kernel", "@http_cache.store", "@?esi"]
 
   http_cache:
     class:          Austral\CacheBundle\Services\HttpCache
-    arguments:      ["@kernel", "@http_cache.store", "@?esi"]
+    arguments:      ["@service_container", "@kernel", "@http_cache.store", "@?esi"]
 
 ##### Configuration
 

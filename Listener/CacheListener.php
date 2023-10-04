@@ -10,10 +10,8 @@
 
 namespace Austral\CacheBundle\Listener;
 
-use Austral\CacheBundle\Configuration\CacheConfiguration;
 use Austral\CacheBundle\Services\HttpCacheEnabledChecker;
 use Austral\ToolsBundle\Services\Debug;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 
 /**
