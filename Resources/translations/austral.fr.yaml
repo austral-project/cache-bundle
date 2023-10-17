@@ -4,6 +4,8 @@ pages:
       singular:                                     Gestion du cache
       plural:                                       Gestion du cache
       subTitle:                                     Vue d'ensemble des urls mise en cache
+    cachePurgeAll:
+      singular:                                     Supprimer tout le cache HTTP
 
 
 actions:
