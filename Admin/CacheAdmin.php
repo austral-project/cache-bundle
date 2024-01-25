@@ -48,39 +48,43 @@ class CacheAdmin extends Admin
          */
         foreach ($urlParametersByDomain as $langue => $urlParametersByDomainAndLanguage)
         {
-          if(!array_key_exists($urlParametersByDomainAndLanguage->getDomain()->getDomain(), $urlsByCache))
+          if(!$urlParametersByDomainAndLanguage->getDomain()->getLanguage() || ($langue === $urlParametersByDomainAndLanguage->getDomain()->getLanguage()))
           {
-            $urlsByCache[$urlParametersByDomainAndLanguage->getDomain()->getDomain()] = array();
-          }
-          $urlsByCache[$urlParametersByDomainAndLanguage->getDomain()->getDomain()][$langue] = array();
-
-          /** @var \Austral\SeoBundle\Entity\Interfaces\UrlParameterInterface  $urlParameter */
-          foreach ($urlParametersByDomainAndLanguage->getUrlParameters() as $urlParameter)
-          {
-            if($urlParameter->getPath()) {
-              $uri = $australRouting->getUrl("austral_website_page", $urlParameter, array('_locale'=>$langue));
-            }
-            else {
-              $uri = $australRouting->getUrl("austral_website_homepage", $urlParameter, array('_locale'=>$langue));
-            }
-            $cacheKey = 'md'.hash('sha256', $uri);
-
-            $cacheEnabled = $httpCacheEnabledChecker
-              ->setEnabledByUrl($urlParameter->getInCacheEnabled())
-              ->checkByDomainAndUri($urlParametersByDomainAndLanguage->getDomain()->getDomain(), $uri);
-            $urlsByCache[$urlParametersByDomainAndLanguage->getDomain()->getDomain()][$langue][$uri] = array(
-              "status"  =>  file_exists($httpCache->getStore()->getPath($cacheKey)),
-              "enabled" =>  $cacheEnabled,
-              "key"     =>  $cacheKey
-            );
-            if(!$cacheEnabled)
+            if(!array_key_exists($urlParametersByDomainAndLanguage->getDomain()->getDomain(), $urlsByCache))
             {
-              $urlsDisabled++;
+              $urlsByCache[$urlParametersByDomainAndLanguage->getDomain()->getDomain()] = array();
             }
-            $urlsTotal++;
-            if($urlsByCache[$urlParametersByDomainAndLanguage->getDomain()->getDomain()][$langue][$uri]["status"] === true)
+            $urlsByCache[$urlParametersByDomainAndLanguage->getDomain()->getDomain()][$langue] = array();
+
+            /** @var \Austral\SeoBundle\Entity\Interfaces\UrlParameterInterface  $urlParameter */
+            foreach ($urlParametersByDomainAndLanguage->getUrlParameters() as $urlParameter)
             {
-              $urlsInCache++;
+              if($urlParameter->getPath()) {
+                $uri = $australRouting->getUrl("austral_website_page", $urlParameter, array('_locale'=>$langue));
+              }
+              else {
+                $uri = $australRouting->getUrl("austral_website_homepage", $urlParameter, array('_locale'=>$langue));
+              }
+              $cacheKey = 'md'.hash('sha256', $uri);
+
+              $cacheEnabled = $httpCacheEnabledChecker
+                ->setEnabledByUrl($urlParameter->getInCacheEnabled())
+                ->checkByDomainAndUri($urlParametersByDomainAndLanguage->getDomain()->getDomain(), $uri);
+
+              $urlsByCache[$urlParametersByDomainAndLanguage->getDomain()->getDomain()][$langue][$uri] = array(
+                "status"  =>  file_exists($httpCache->getStore()->getPath($cacheKey)),
+                "enabled" =>  $cacheEnabled,
+                "key"     =>  $cacheKey
+              );
+              if(!$cacheEnabled)
+              {
+                $urlsDisabled++;
+              }
+              $urlsTotal++;
+              if($urlsByCache[$urlParametersByDomainAndLanguage->getDomain()->getDomain()][$langue][$uri]["status"] === true)
+              {
+                $urlsInCache++;
+              }
             }
           }
         }
