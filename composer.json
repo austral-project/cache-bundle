@@ -12,17 +12,17 @@
     }
   ],
   "require": {
-    "php":                                    "^8.0",
+    "php":                                    "^7.4 || ^8.0 || ^8.1 || ^8.2",
 
     "austral/tools-bundle":                   "^3.1",
-    "symfony/cache":                          "^5.4",
-    "symfony/http-kernel":                    "^5.4"
+    "symfony/cache":                          "^5.4 || ^6.4",
+    "symfony/http-kernel":                    "^5.4 || ^6.4"
   },
   "require-dev": {
   },
   "suggest": {
-    "austral/admin-bundle":                   "*@dev",
-    "austral/website-bundle":                 "*@dev"
+    "austral/admin-bundle":                   "^3.1",
+    "austral/website-bundle":                 "^3.1"
   },
   "config": {
     "sort-packages":                          true
