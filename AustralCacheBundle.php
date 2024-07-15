@@ -23,7 +23,7 @@ class AustralCacheBundle extends Bundle
   /**
    * @param ContainerBuilder $container
    */
-  public function build(ContainerBuilder $container)
+  public function build(ContainerBuilder $container): void
   {
     parent::build($container);
   }
