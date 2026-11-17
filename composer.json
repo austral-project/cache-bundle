@@ -1,34 +1,43 @@
 {
-  "name":                                     "austral/cache-bundle",
-  "type":                                     "symfony-bundle",
-  "description":                              "Cache Austral Bundle",
-  "keywords":                                 ["Austral", "Cache", "Symfony"],
-  "license":                                  "MIT",
-  "authors": [
-    {
-      "name":                                 "Matthieu Beurel",
-      "email":                                "matthieu@austral.dev",
-      "role":                                 "Developer"
-    }
-  ],
-  "require": {
-    "php":                                    "^8.0 || ^8.1 || ^8.2",
-
-    "austral/tools-bundle":                   "^3.1",
-    "symfony/cache":                          "^5.4 || ^6.4",
-    "symfony/http-kernel":                    "^5.4 || ^6.4"
-  },
-  "require-dev": {
-  },
-  "suggest": {
-    "austral/admin-bundle":                   "^3.1",
-    "austral/website-bundle":                 "^3.1"
-  },
-  "config": {
-    "sort-packages":                          true
-  },
-  "autoload": {
-    "psr-4": { "Austral\\CacheBundle\\": "" }
-  },
-  "minimum-stability":                        "dev"
+    "name": "austral/cache-bundle",
+    "type": "symfony-bundle",
+    "description": "Cache Austral Bundle",
+    "keywords": [
+        "Austral",
+        "Cache",
+        "Symfony"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Matthieu Beurel",
+            "email": "matthieu@austral.dev",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=8.2 <9.0",
+        "austral/tools-bundle": "^4.0",
+        "symfony/cache": "^7.4",
+        "symfony/http-kernel": "^7.4"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0"
+    },
+    "suggest": {
+        "austral/admin-bundle": "^4.0",
+        "austral/website-bundle": "^4.0"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Austral\\CacheBundle\\": ""
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
