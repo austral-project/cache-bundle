@@ -21,7 +21,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class HttpCacheEvent extends Event
 {
 
-  const EVENT_CLEAR_HTTP_CACHE = "austral.cache.clear_http_cache";
+  const string EVENT_CLEAR_HTTP_CACHE = "austral.cache.clear_http_cache";
 
   /**
    * @var Request|null
