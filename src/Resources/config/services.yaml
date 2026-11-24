@@ -1,10 +1,56 @@
 services:
 
-##### Configuration
+  ##### Configuration
   Austral\CacheBundle\Configuration\CacheConfiguration:
     arguments:
-      $config:  "%austral_cache%"
-
+      $config: '%austral_cache%'
   austral.cache.config:
-    alias:      Austral\CacheBundle\Configuration\CacheConfiguration
-    public:     true
+    alias:  Austral\CacheBundle\Configuration\CacheConfiguration
+    public: true
+
+  ##### Caches ($pool and $ttl are set by AustralCacheExtension from the configuration)
+  Austral\CacheBundle\Cache\ResultCache:
+    arguments:
+      $pool: ~
+      $ttl:  0
+  austral.cache.result:
+    alias:  Austral\CacheBundle\Cache\ResultCache
+    public: true
+
+  Austral\CacheBundle\Cache\RenderCache:
+    arguments:
+      $pool:             ~
+      $ttl:              0
+      $contextProviders: !tagged_iterator austral.cache.context_provider
+    tags:
+      - { name: kernel.reset, method: reset }
+  austral.cache.render:
+    alias:  Austral\CacheBundle\Cache\RenderCache
+    public: true
+
+  ##### Listeners
+  # $resultKeys is set by ResultKeyPass from the austral.cache.result_key tags
+  Austral\CacheBundle\Listener\EntityCacheListener:
+    arguments:
+      $renderCache:     '@Austral\CacheBundle\Cache\RenderCache'
+      $resultCache:     '@Austral\CacheBundle\Cache\ResultCache'
+      $eventDispatcher: '@event_dispatcher'
+      $resultKeys:      []
+    tags:
+      - { name: doctrine.event_listener, event: onFlush }
+      - { name: doctrine.event_listener, event: postFlush }
+      - { name: kernel.reset, method: reset }
+
+  Austral\CacheBundle\Listener\CacheRebuildListener:
+    arguments:
+      $renderCache: '@Austral\CacheBundle\Cache\RenderCache'
+      $resultCache: '@Austral\CacheBundle\Cache\ResultCache'
+    tags:
+      - { name: kernel.event_listener, event: 'austral.cache.rebuild', method: onRebuild, priority: 1024 }
+
+  ##### Command
+  Austral\CacheBundle\Command\CacheRebuildCommand:
+    calls:
+      - [ setEventDispatcher, [ '@event_dispatcher' ] ]
+    tags:
+      - { name: console.command, command: 'austral:cache:rebuild' }

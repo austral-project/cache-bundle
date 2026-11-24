@@ -1,3 +1,8 @@
 austral_cache:
-  enabled:            false
-
+  enabled:  true
+  # filesystem: one cache per server; redis: shared between servers; pool: a cache pool of the application
+  adapter:  filesystem
+  # dsn:    '%env(REDIS_URL)%'
+  # pool:   cache.app
+  # 0: no expiration, the cache is invalidated when an entity is saved
+  ttl:      0

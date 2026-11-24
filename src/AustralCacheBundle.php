@@ -11,6 +11,8 @@
 
 namespace Austral\CacheBundle;
 
+use Austral\CacheBundle\DependencyInjection\Compiler\ResultKeyPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -20,4 +22,12 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class AustralCacheBundle extends Bundle
 {
+  /**
+   * @param ContainerBuilder $container
+   */
+  public function build(ContainerBuilder $container): void
+  {
+    parent::build($container);
+    $container->addCompilerPass(new ResultKeyPass());
+  }
 }
