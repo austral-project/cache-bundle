@@ -24,7 +24,7 @@
     "symfony/dependency-injection": "^7.4",
     "symfony/yaml": "^7.4",
     "doctrine/orm": "^3.7",
-    "doctrine/persistence": "3.3 || ^4.0",
+    "doctrine/persistence": "^3.3 || ^4.0",
     "psr/cache": "^2.0 || ^3.0",
     "symfony/cache": "^7.4",
     "symfony/cache-contracts": "^3.5",

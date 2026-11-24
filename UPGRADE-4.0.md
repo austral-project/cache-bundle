@@ -4,6 +4,7 @@
 
 - PHP 8.4 minimum
 - Symfony 7.4
+- Doctrine ORM 3
 
 ## Update the dependencies
 
@@ -18,7 +19,7 @@ All `austral/*` packages must be upgraded to `^4.0` at the same time.
 
 ### The HTTP cache is removed
 
-The HTTP cache of 3.1 (an extension of the `HttpCache` reverse proxy of FrameworkBundle, enabled by domain and URL) is removed. The bundle is being rewritten for 4.0 as a render cache: the HTML of the content blocks is cached and invalidated by tags when an entity is saved. Until the rewrite is released, the bundle only defines its configuration and caches nothing.
+The HTTP cache of 3.1 (an extension of the `HttpCache` reverse proxy of FrameworkBundle, enabled by domain and URL) is removed. In 4.0, the bundle is the cache infrastructure of Austral: a Doctrine result cache and a cache of HTML renders, both invalidated when an entity is saved (see the [README](README.md)).
 
 Removed classes:
 
@@ -42,12 +43,12 @@ In your application:
 
 ### Configuration
 
-Only the `enabled` option remains. It defaults to `false` and has no effect until the rewrite is released. The other options are removed, and the bundle now rejects them (`Unrecognized option "clearAuto" under "austral_cache"`):
+The options of 3.1 are removed, and the bundle rejects them (`Unrecognized option "clearAuto" under "austral_cache"`). The new options configure where the caches are stored:
 
 ```diff
  # config/packages/austral_cache.yaml
  austral_cache:
-   enabled: false
+-  enabled: false
 -  clearAuto: false
 -  shared_age_max: 3600
 -  include:
@@ -56,24 +57,35 @@ Only the `enabled` option remains. It defaults to `false` and has no effect unti
 -  exclude:
 -    path: []
 -    domain: []
++  enabled: true
++  adapter: filesystem      # filesystem | redis | pool
++  # dsn: '%env(REDIS_URL)%'   # redis adapter
++  # pool: cache.app           # pool adapter
++  ttl: 0                   # 0: no expiration
 ```
 
-In 3.1, `enabled` was `true` when the option was not set (the default of the configuration tree overrode the declared default). In 4.0, it is `false`.
+`enabled` defaults to `true`. With `ttl: 0`, the cache does not expire: it is invalidated when an entity is saved.
+
+> **Warning:** with the `filesystem` adapter, each server has its own cache. An entity saved on one server only invalidates the cache of this server. With several servers, use the `redis` adapter (or a shared `pool`), or set a `ttl`.
+
+A bundle that uses the cache can have its own option to disable it (`austral_domain.cache`, for example). Both options must be enabled for the cache to be used.
 
 ### Services: explicit definitions, private class ids
 
-The services of the bundle are no longer autowired nor autoconfigured. The configuration is the only service left:
+The services of the bundle are no longer autowired nor autoconfigured: each one is defined with its arguments and tags. The service ids are the class names, and they are **private**:
 
 | Service | Id | Alias |
 |---------|----|-------|
-| Configuration | `Austral\CacheBundle\Configuration\CacheConfiguration` (private) | `austral.cache.config` (public) |
+| Configuration | `Austral\CacheBundle\Configuration\CacheConfiguration` | `austral.cache.config` (public) |
+| Doctrine result cache | `Austral\CacheBundle\Cache\ResultCache` | `austral.cache.result` (public) |
+| Cache of HTML renders | `Austral\CacheBundle\Cache\RenderCache` | `austral.cache.render` (public) |
 
-In 3.1, `austral.cache.config` was the service id and the class name was an alias. Fetch the configuration by its alias, or inject it:
+In 3.1, `austral.cache.config` was the service id and the class name was an alias. Fetch a service by its alias, or inject it:
 
 ```yaml
 App\Service\MyService:
   arguments:
-    $cacheConfiguration: '@austral.cache.config'
+    $renderCache: '@austral.cache.render'
 ```
 
 The XML namespace of the bundle configuration changes. In an XML configuration file:
