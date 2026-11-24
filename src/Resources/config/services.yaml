@@ -1,0 +1,10 @@
+services:
+
+##### Configuration
+  Austral\CacheBundle\Configuration\CacheConfiguration:
+    arguments:
+      $config:  "%austral_cache%"
+
+  austral.cache.config:
+    alias:      Austral\CacheBundle\Configuration\CacheConfiguration
+    public:     true

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Austral Cache Bundle package.
  *
@@ -15,18 +16,19 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-use \Exception;
-
 /**
  * Austral Cache Extension.
+ *
  * @author Matthieu Beurel <matthieu@austral.dev>
+ *
  * @final
  */
 class AustralCacheExtension extends Extension
 {
   /**
    * {@inheritdoc}
-   * @throws Exception
+   *
+   * @throws \Exception
    */
   public function load(array $configs, ContainerBuilder $container): void
   {
@@ -38,29 +40,7 @@ class AustralCacheExtension extends Extension
     $container->setParameter('austral_cache', $config);
 
     $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-    $loader->load('parameters.yaml');
     $loader->load('services.yaml');
-    $loader->load('command.yaml');
-    $this->loadConfigToAustralBundle($container, $loader);
-  }
-
-  /**
-   * @param ContainerBuilder $container
-   * @param YamlFileLoader $loader
-   *
-   * @throws Exception
-   */
-  protected function loadConfigToAustralBundle(ContainerBuilder $container, YamlFileLoader $loader): void
-  {
-    $bundlesConfigPath = $container->getParameter("kernel.project_dir")."/config/bundles.php";
-    if(file_exists($bundlesConfigPath))
-    {
-      $contents = require $bundlesConfigPath;
-      if(array_key_exists("Austral\AdminBundle\AustralAdminBundle", $contents))
-      {
-        $loader->load('austral_admin.yaml');
-      }
-    }
   }
 
   /**
@@ -68,7 +48,6 @@ class AustralCacheExtension extends Extension
    */
   public function getNamespace(): string
   {
-    return 'https://austral.app/schema/dic/austral_cache';
+    return 'https://austral.dev/schema/dic/austral_cache';
   }
-
 }

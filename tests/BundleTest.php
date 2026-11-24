@@ -22,8 +22,8 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
  */
 final class BundleTest extends TestCase
 {
-    public function testBundleCanBeInstantiated(): void
-    {
-        self::assertInstanceOf(BundleInterface::class, new AustralCacheBundle());
-    }
+  public function testBundleCanBeInstantiated(): void
+  {
+    self::assertInstanceOf(BundleInterface::class, new AustralCacheBundle());
+  }
 }

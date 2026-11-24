@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of the Austral Cache Bundle package.
  *
@@ -10,22 +11,13 @@
 
 namespace Austral\CacheBundle;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * Austral Cache Bundle.
+ *
  * @author Matthieu Beurel <matthieu@austral.dev>
  */
 class AustralCacheBundle extends Bundle
 {
-
-  /**
-   * @param ContainerBuilder $container
-   */
-  public function build(ContainerBuilder $container): void
-  {
-    parent::build($container);
-  }
-  
 }
