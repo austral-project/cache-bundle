@@ -30,7 +30,8 @@
     "symfony/cache-contracts": "^3.5",
     "symfony/console": "^7.4",
     "symfony/event-dispatcher-contracts": "^3.5",
-    "symfony/service-contracts": "^3.5"
+    "symfony/service-contracts": "^3.5",
+    "symfony/http-foundation": "^7.4"
   },
   "require-dev": {
     "symfony/framework-bundle": "^7.4",

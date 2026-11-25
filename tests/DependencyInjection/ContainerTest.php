@@ -15,6 +15,7 @@ namespace Austral\CacheBundle\Tests\DependencyInjection;
 
 use Austral\CacheBundle\AustralCacheBundle;
 use Austral\CacheBundle\Cache\CacheContextProviderInterface;
+use Austral\CacheBundle\Cache\LocaleCacheContext;
 use Austral\CacheBundle\Cache\RenderCache;
 use Austral\CacheBundle\Cache\ResultCache;
 use Austral\CacheBundle\Command\CacheRebuildCommand;
@@ -35,6 +36,8 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -283,6 +286,26 @@ final class ContainerTest extends TestCase
     self::assertTrue($instanceof[CacheContextProviderInterface::class]->hasTag('austral.cache.context_provider'));
   }
 
+  /**
+   * The locale of the request (set from the language of Austral by http-bundle) is always part of the key.
+   */
+  public function testEachLocaleHasItsOwnRender(): void
+  {
+    self::assertTrue(self::loadExtension()->getDefinition(LocaleCacheContext::class)->hasTag('austral.cache.context_provider'));
+
+    $container = self::compiledContainer();
+    $requestStack = $container->get('request_stack');
+    self::assertInstanceOf(RequestStack::class, $requestStack);
+    $renderCache = self::renderCache($container);
+
+    $requestStack->push(self::request('fr'));
+    $frenchKey = $renderCache->key('component', 12);
+    $requestStack->pop();
+    $requestStack->push(self::request('en'));
+
+    self::assertNotSame($frenchKey, $renderCache->key('component', 12));
+  }
+
   public function testTheContextProvidersAreGivenToTheRenderCache(): void
   {
     $container = self::loadExtension();
@@ -290,7 +313,7 @@ final class ContainerTest extends TestCase
       ->addTag('austral.cache.context_provider');
     self::compile($container);
 
-    self::assertNotSame('austral.render.component.12', self::renderCache($container)->key('component', 12));
+    self::assertNotSame(self::renderCache(self::compiledContainer())->key('component', 12), self::renderCache($container)->key('component', 12));
   }
 
   public function testTheXmlNamespace(): void
@@ -305,6 +328,7 @@ final class ContainerTest extends TestCase
   {
     return [
       CacheConfiguration::class,
+      LocaleCacheContext::class,
       ResultCache::class,
       RenderCache::class,
       EntityCacheListener::class,
@@ -342,6 +366,7 @@ final class ContainerTest extends TestCase
   {
     $container = new ContainerBuilder();
     $container->setDefinition('event_dispatcher', new Definition(EventDispatcher::class));
+    $container->setDefinition('request_stack', new Definition(RequestStack::class)->setPublic(true));
     new AustralCacheBundle()->build($container);
     new AustralCacheExtension()->load($configs, $container);
 
@@ -369,6 +394,14 @@ final class ContainerTest extends TestCase
       }
     }
     $container->compile();
+  }
+
+  private static function request(string $locale): Request
+  {
+    $request = Request::create('/');
+    $request->setLocale($locale);
+
+    return $request;
   }
 
   private static function resultCache(ContainerBuilder $container): ResultCache

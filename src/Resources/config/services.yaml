@@ -28,6 +28,12 @@ services:
     alias:  Austral\CacheBundle\Cache\RenderCache
     public: true
 
+  Austral\CacheBundle\Cache\LocaleCacheContext:
+    arguments:
+      $requestStack:     '@request_stack'
+    tags:
+      - { name: austral.cache.context_provider }
+
   ##### Listeners
   # $resultKeys is set by ResultKeyPass from the austral.cache.result_key tags
   Austral\CacheBundle\Listener\EntityCacheListener:

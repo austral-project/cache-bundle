@@ -106,7 +106,7 @@ $html = $renderCache->get('component', $componentId, function () use ($component
 
 ### Context of the renders
 
-The key of a render contains the context given by the `CacheContextProviderInterface` services: each context (domain, language…) has its own render. A service of your application that implements the interface is tagged automatically:
+The key of a render contains the context given by the `CacheContextProviderInterface` services: each context has its own render. The bundle provides the locale of the current request (`LocaleCacheContext`): each language has its own render. Other bundles add theirs, such as domain-bundle with the current domain. A service of your application that implements the interface is tagged automatically:
 
 ```php
 use Austral\CacheBundle\Cache\CacheContextProviderInterface;
